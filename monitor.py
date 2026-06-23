@@ -5,14 +5,19 @@ import feedparser
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
-# Untuk sementara satu RSS dulu
-RSS_URL = os.environ["RSS_URL"]
+RSS_URLS = os.environ["RSS_URLS"].splitlines()
 
-feed = feedparser.parse(RSS_URL)
+for rss_url in RSS_URLS:
 
-for item in feed.entries[:5]:
+    print("Membaca:", rss_url)
 
-    pesan = f"""
+    feed = feedparser.parse(rss_url)
+
+    print("Jumlah item:", len(feed.entries))
+
+    for item in feed.entries[:5]:
+
+        pesan = f"""
 🏠 Lead Properti Baru
 
 Judul:
@@ -22,14 +27,14 @@ Link:
 {item.link}
 """
 
-    r = requests.get(
-        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-        params={
-            "chat_id": CHAT_ID,
-            "text": pesan
-        }
-    )
+        r = requests.get(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            params={
+                "chat_id": CHAT_ID,
+                "text": pesan
+            }
+        )
 
-    print(r.status_code)
+        print(r.status_code)
 
 print("Selesai")
